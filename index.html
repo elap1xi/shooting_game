@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슈팅 게임</title>
+    <style>
+    /* For Test */
+
+    /* --------------------------------------- */
+        body {
+            background-color: white;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #vertical_line_L {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: black;
+            left: 400px;
+        }
+
+        #vertical_line_R {
+            position: absolute;
+            width: 2px;
+            height: 100%;
+            background-color: black;
+            right: 400px;
+        }
+
+        #image {
+            position: absolute;
+        }
+        #image_enemy, #image_enemy_1 {
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+    <img id="image" src="images/obj.png" alt="이미지" width="60px" height="60px">
+    <div id="enemy_">
+        <img id="image_enemy" src="images/enemy.png" alt="이미지" width="60px" height="60px">
+        <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+        <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+        <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+        <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+    </div>
+    <div id="vertical_line_L"></div>
+    <div id="vertical_line_R"></div>
+    <div id="imagePosition">(x)</div>
+    <script>
+        let level = 1;
+        let chk_lvl = [];
+        const image = document.getElementById("image");
+        const image_enemy = document.getElementById("image_enemy");
+        const imagePosition = document.getElementById("imagePosition");
+
+        // user =========================================
+        const centerX = window.innerWidth / 2;
+        const centerY = window.innerHeight * 0.8;
+
+        let imageX = centerX - image.width / 2;
+        let imageY = centerY - image.height / 2;
+
+        image.style.left = imageX + "px";
+        image.style.top = imageY + "px";
+        // ==============================================
+        // 이미지 위치 제한 범위
+        const imageMinX = 410; // 왼쪽 수직선 오른쪽 끝
+        const imageMaxX = window.innerWidth - 470; // 오른쪽 수직선 왼쪽 끝
+        // ==============================================
+
+        let enemy_random_pos = 0;
+        let enemy_vertical_pos = 0;
+
+        // enemy boss
+        let enemyX = (centerX - (image_enemy.width / 2)) + enemy_random_pos;
+        let enemyY = (centerY - (image_enemy.height * 10)) + enemy_vertical_pos;
+
+        image_enemy.style.left = enemyX + "px";
+        image_enemy.style.top = enemyY + "px";
+
+        // enemy 1
+        let enemyX1 = enemyX + 60;
+        let enemyY1 = enemyY;
+
+        image_enemy_1.style.left = enemyX1 + "px";
+        image_enemy_1.style.top = enemyY1 + "px";
+
+
+    // =====================================================================================
+        var bullets = [];
+        document.addEventListener("keydown", (event) => {
+            const key = event.key;
+            if (key === "a" || key === "d") {
+                moveImage(key);
+            } else if (key == 'k'){
+                var bullet = document.createElement('div');
+                bullet.style.width = '4px';
+                bullet.style.height = '12px';
+                bullet.style.backgroundColor = 'grey';
+                bullet.style.position = 'absolute';
+                bullet.style.left = image.offsetLeft+28 + 'px';
+                bullet.style.top = image.offsetTop + 'px';
+                document.body.appendChild(bullet);
+                bullets.push(bullet);
+            }
+        });
+
+        function sleep(s) {
+            return new Promise(resolve => setTimeout(resolve, s * 1000));
+        }
+        
+        function moveImage(direction) {
+            if (direction === "a" && imageX > imageMinX) {
+                imageX -= 10;
+            } else if (direction === "d" && imageX < imageMaxX) {
+                imageX += 10;
+            }
+            image.style.left = imageX + "px";
+        }
+
+        user_h = 30; user_hh = 2;
+        
+        e14_z = 20;
+        e5_b = 100; e5_z = 20;
+        e68_z = 40;
+        e9_b = 150; e9_z = 50;
+        e10_b = 200;
+
+        function check_enemy_health(image){
+            
+            if(e14_z==0){
+                return true;
+            } else {
+                return false;
+                e14_z--;
+            }
+        }
+
+        // 이미지가 bullet 충돌시 깜빡임 효과
+        async function enemy_heart(image) {
+            image.style.opacity = "30%";
+            await sleep(0.05);
+            image.style.opacity = "100%";
+        }
+
+        // 이미지 사라짐 효과 (죽임) 
+        async function killed_enemy(image){
+            for(k=0; k<5; k++){
+                image.style.opacity = "100%";
+                await sleep(0.08);
+                image.style.opacity = "30%";
+                await sleep(0.08);
+            }
+
+            image.style.visibility = "hidden";
+            image.style.left = 0; 
+        }
+
+        // 이미지와 bullet의 충돌 체크
+        function checkCollision(bullet, image) {
+            var rect1 = bullet.getBoundingClientRect(); // 총알의 위치와 크기 정보
+            var rect2 = image.getBoundingClientRect(); // 이미지의 위치와 크기 정보
+            return !(rect1.right < rect2.left || 
+                    rect1.left > rect2.right || 
+                    rect1.bottom < rect2.top || 
+                    rect1.top > rect2.bottom);
+        }
+
+        setInterval(
+            function () {
+                for (var i = 0; i < bullets.length; i++) {
+                    if(checkCollision(bullets[i], image_enemy)){
+                        updateImagePosition();
+                        document.body.removeChild(bullets[i]);
+                        bullets.splice(i, 1);
+                        if(check_enemy_health(image_enemy)){
+                            killed_enemy(image_enemy);
+                        }
+                    } else if (bullets[i].offsetTop <= 0) {
+                        // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                        document.body.removeChild(bullets[i]);
+                        bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                    } else {
+                        bullets[i].style.top = (bullets[i].offsetTop - 10) + "px";
+                    }
+
+                    /*
+                    if (checkCollision(bullets[i], image_enemy_1)){
+                        document.body.removeChild(bullets[i]);
+                        bullets.splice(i, 1);
+                        if(check_enemy_health(image_enemy_1)){
+                            killed_enemy(image_enemy_1);
+                        }
+                    } else if (bullets[i].offsetTop <= 0) {
+                        // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                        document.body.removeChild(bullets[i]);
+                        bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                    } else {
+                        bullets[i].style.top = (bullets[i].offsetTop - 10) + "px";
+                    }*/
+                }
+            }, 10
+        );
+
+        updateImagePosition();
+
+        function updateImagePosition() {
+            imagePosition.textContent = `(${e14_z})`;
+        }
+        
+        </script>
+</body>
+</html>
