@@ -30,31 +30,39 @@
             right: 400px;
         }
 
-        #image {
+        #image, #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4 {
             position: absolute;
         }
-        #image_enemy, #image_enemy_1 {
+        #log {
+            right: 50px;
             position: absolute;
         }
     </style>
 </head>
 <body>
-    <img id="image" src="images/obj.png" alt="이미지" width="60px" height="60px">
-    <div id="enemy_">
-        <img id="image_enemy" src="images/enemy.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-    </div>
+    <img id="image"         src="images/obj.png"        alt="이미지" width="60px" height="60px">
+    <img id="image_enemy"   src="images/enemy.png"      alt="이미지" width="60px" height="60px">
+    <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+    <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+    <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+    <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
     <div id="vertical_line_L"></div>
     <div id="vertical_line_R"></div>
     <div id="imagePosition">(x)</div>
+    <div id="log"></div>
     <script>
         let level = 1;
         let chk_lvl = [];
+        lv_5 = false;
+        lv_6 = false;
+        lv_9 = false;
+        lv_10 = false;
+        image_enemy.style.visibility = "hidden";
+        image_enemy_1.style.visibility = "hidden";
+        image_enemy_2.style.visibility = "hidden";
+        image_enemy_3.style.visibility = "hidden";
+        image_enemy_4.style.visibility = "hidden";
         const image = document.getElementById("image");
-        const image_enemy = document.getElementById("image_enemy");
         const imagePosition = document.getElementById("imagePosition");
 
         // user =========================================
@@ -74,7 +82,137 @@
 
         let enemy_random_pos = 0;
         let enemy_vertical_pos = 0;
+        
+        function pos(image, enemy_random_pos, enemy_vertical_pos){
+            let enemyX = (centerX - (image.width / 2)) + enemy_random_pos;
+            let enemyY = (centerY - (image.height * 10)) + enemy_vertical_pos;
 
+            image.style.left = enemyX + "px";
+            image.style.top = enemyY + "px";
+            image.style.opacity = "100%";
+            image.style.visibility = null;
+        }
+
+        user_h = 30; user_hh = 2;
+        function set_health(){
+            e14_z = 19; e14_z2 = 19; e14_z3 = 19; e14_z4 = 19;
+            e5_b = 99; 
+            e5_z = 19;  e5_z2 = 19;  e5_z3 = 19;  e5_z4 = 19;
+            e68_z = 39; e68_z2 = 39; e68_z3 = 39; e68_z4 = 39;
+            e9_b = 149; 
+            e9_z = 49;  e9_z2 = 49;  e9_z3 = 49;  e9_z4 = 49;
+            e10_b = 199;
+        }
+
+        // X range : -270 ~ 270
+        // Y range : -10 ~ 250
+
+        function rdm_x(v) {
+            if(v == 'x'){
+                return Math.floor(Math.random() * (270 - (-270) + 1)) - 270;
+            } else if(v=='y-1') {
+                return Math.floor(Math.random() * (20 - (-10) + 1)) - 10;
+            } else if(v=='y-2') {
+                return Math.floor(Math.random() * (90 - (80) + 1)) + 80;
+            } else if(v=='y-3') {
+                return Math.floor(Math.random() * (160 - (150) + 1)) + 150;
+            } else if(v=='y-4') {
+                return Math.floor(Math.random() * (250 - (220) + 1)) + 220;
+            }
+        }
+
+        spawn(1);
+        set_health();
+        function spawn(level){
+            if(level>=1 && level<=4){
+                set_health();
+                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+            }
+            else if(level==5){
+                set_health();
+                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+            }
+            else if(level>=6 && level<=8){
+                set_health();
+                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
+            }
+            else if(level==9){
+                set_health();
+                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
+            }
+            else if(level==10){
+                set_health();
+                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+            } else {
+                // win
+            }
+        }
+        
+        setInterval(
+            function () {
+                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}`;
+                if(!lv_5 && !lv_6 && !lv_9 && !lv_10){
+                    if(image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden"){
+                        level=level+1;
+                        if(level==5){
+                            lv_5=true;
+                            spawn(level);
+                        } else {
+                            spawn(level);
+                        }
+                    }
+                } else if(lv_5 && !lv_6 && !lv_9 && !lv_10){
+                    if(image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden"){
+                        level=level+1;
+                        if(level==6){
+                            lv_6=true;
+                            lv_5=false;
+                            spawn(6);
+                        }
+                    }
+                } else if(!lv_5 && lv_6 && !lv_9 && !lv_10){
+                    if(image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden"){
+                        level=level+1;
+                        if(level==9){
+                            lv_9=true;
+                            lv_6=false;
+                            spawn(level);
+                        } else {
+                            spawn(level);
+                        }
+                    }
+                } else if(!lv_5 && !lv_6 && lv_9 && !lv_10){
+                    if(image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden"){
+                        level=level+1;
+                        if(level==6){
+                            lv_10=true;
+                            lv_9=false;
+                            spawn(10);
+                        }
+                    }
+                } else if(!lv_5 && !lv_6 && !lv_9 && lv_10){
+                    if(image_enemy.style.visibility == "hidden"){
+                        level=level+1;
+                        
+                    }
+                }
+
+            }, 1000
+        );
+
+    /*
         // enemy boss
         let enemyX = (centerX - (image_enemy.width / 2)) + enemy_random_pos;
         let enemyY = (centerY - (image_enemy.height * 10)) + enemy_vertical_pos;
@@ -88,7 +226,7 @@
 
         image_enemy_1.style.left = enemyX1 + "px";
         image_enemy_1.style.top = enemyY1 + "px";
-
+    */
 
     // =====================================================================================
         var bullets = [];
@@ -122,21 +260,176 @@
             image.style.left = imageX + "px";
         }
 
-        user_h = 30; user_hh = 2;
         
-        e14_z = 20;
-        e5_b = 100; e5_z = 20;
-        e68_z = 40;
-        e9_b = 150; e9_z = 50;
-        e10_b = 200;
 
         function check_enemy_health(image){
-            
-            if(e14_z==0){
-                return true;
-            } else {
-                return false;
-                e14_z--;
+            if (image == image_enemy){
+                if(level==5){
+                    if(e5_b==0){
+                        return true;
+                    } else {
+                        e5_b--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==9){
+                    if(e9_b==0){
+                        return true;
+                    } else {
+                        e9_b--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==10){
+                    if(e10_b==0){
+                        return true;
+                    } else {
+                        e10_b--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                }
+                
+            }
+            if (image == image_enemy_1){
+                if(level==1 || level==2 || level==3 || level==4){
+                    if(e14_z==0){
+                        return true;
+                    } else {
+                        e14_z--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==5){
+                    if(e5_z==0){
+                        return true;
+                    } else {
+                        e5_z--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==6 || level==7 || level==8){
+                    if(e68_z==0){
+                        return true;
+                    } else {
+                        e68_z--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==9){
+                    if(e9_z==0){
+                        return true;
+                    } else {
+                        e9_z--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                }
+            }
+            if (image == image_enemy_2){
+                if(level==1 || level==2 || level==3 || level==4){
+                    if(e14_z2==0){
+                        return true;
+                    } else {
+                        e14_z2--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==5){
+                    if(e5_z2==0){
+                        return true;
+                    } else {
+                        e5_z2--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==6 || level==7 || level==8){
+                    if(e68_z2==0){
+                        return true;
+                    } else {
+                        e68_z2--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==9){
+                    if(e9_z2==0){
+                        return true;
+                    } else {
+                        e9_z2--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                }
+            }
+            if (image == image_enemy_3){
+                if(level==1 || level==2 || level==3 || level==4){
+                    if(e14_z3==0){
+                        return true;
+                    } else {
+                        e14_z3--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==5){
+                    if(e5_z3==0){
+                        return true;
+                    } else {
+                        e5_z3--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==6 || level==7 || level==8){
+                    if(e68_z3==0){
+                        return true;
+                    } else {
+                        e68_z3--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==9){
+                    if(e9_z3==0){
+                        return true;
+                    } else {
+                        e9_z3--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                }
+            }
+            if (image == image_enemy_4){
+                if(level==1 || level==2 || level==3 || level==4){
+                    if(e14_z4==0){
+                        return true;
+                    } else {
+                        e14_z4--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==5){
+                    if(e5_z4==0){
+                        return true;
+                    } else {
+                        e5_z4--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==6 || level==7 || level==8){
+                    if(e68_z4==0){
+                        return true;
+                    } else {
+                        e68_z4--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                } else if(level==9){
+                    if(e9_z4==0){
+                        return true;
+                    } else {
+                        e9_z4--;
+                        enemy_heart(image);
+                        return false;
+                    }
+                }
             }
         }
 
@@ -155,53 +448,104 @@
                 image.style.opacity = "30%";
                 await sleep(0.08);
             }
-
             image.style.visibility = "hidden";
             image.style.left = 0; 
         }
 
         // 이미지와 bullet의 충돌 체크
         function checkCollision(bullet, image) {
-            var rect1 = bullet.getBoundingClientRect(); // 총알의 위치와 크기 정보
-            var rect2 = image.getBoundingClientRect(); // 이미지의 위치와 크기 정보
-            return !(rect1.right < rect2.left || 
-                    rect1.left > rect2.right || 
-                    rect1.bottom < rect2.top || 
-                    rect1.top > rect2.bottom);
+            try{
+                var rect1 = bullet.getBoundingClientRect(); // 총알의 위치와 크기 정보
+                var rect2 = image.getBoundingClientRect(); // 이미지의 위치와 크기 정보
+                return !(rect1.right < rect2.left || 
+                        rect1.left > rect2.right || 
+                        rect1.bottom < rect2.top || 
+                        rect1.top > rect2.bottom);
+            } catch {
+                return false;
+            }
         }
 
+
+        speed = 2;
         setInterval(
             function () {
                 for (var i = 0; i < bullets.length; i++) {
-                    if(checkCollision(bullets[i], image_enemy)){
-                        updateImagePosition();
-                        document.body.removeChild(bullets[i]);
-                        bullets.splice(i, 1);
-                        if(check_enemy_health(image_enemy)){
-                            killed_enemy(image_enemy);
+                    try{
+                        if(checkCollision(bullets[i], image_enemy)){
+                            updateImagePosition();
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1);
+                            if(check_enemy_health(image_enemy)){
+                                killed_enemy(image_enemy);
+                            }
+                        } else if (bullets[i].offsetTop <= 0) {
+                            // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                        } else {
+                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
                         }
-                    } else if (bullets[i].offsetTop <= 0) {
-                        // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
-                        document.body.removeChild(bullets[i]);
-                        bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                    } else {
-                        bullets[i].style.top = (bullets[i].offsetTop - 10) + "px";
-                    }
+                        
+                        if (checkCollision(bullets[i], image_enemy_1)){
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1);
+                            if(check_enemy_health(image_enemy_1)){
+                                killed_enemy(image_enemy_1);
+                            }
+                        } else if (bullets[i].offsetTop <= 0) {
+                            // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                        } else {
+                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
+                        }
 
-                    /*
-                    if (checkCollision(bullets[i], image_enemy_1)){
-                        document.body.removeChild(bullets[i]);
-                        bullets.splice(i, 1);
-                        if(check_enemy_health(image_enemy_1)){
-                            killed_enemy(image_enemy_1);
+                        if (checkCollision(bullets[i], image_enemy_2)){
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1);
+                            if(check_enemy_health(image_enemy_2)){
+                                killed_enemy(image_enemy_2);
+                            }
+                        } else if (bullets[i].offsetTop <= 0) {
+                            // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                        } else {
+                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
                         }
-                    } else if (bullets[i].offsetTop <= 0) {
-                        // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
-                        document.body.removeChild(bullets[i]);
-                        bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                    } else {
-                        bullets[i].style.top = (bullets[i].offsetTop - 10) + "px";
-                    }*/
+
+                        if (checkCollision(bullets[i], image_enemy_3)){
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1);
+                            if(check_enemy_health(image_enemy_3)){
+                                killed_enemy(image_enemy_3);
+                            }
+                        } else if (bullets[i].offsetTop <= 0) {
+                            // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                        } else {
+                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
+                        }
+
+                        if (checkCollision(bullets[i], image_enemy_4)){
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1);
+                            if(check_enemy_health(image_enemy_4)){
+                                killed_enemy(image_enemy_4);
+                            }
+                        } else if (bullets[i].offsetTop <= 0) {
+                            // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
+                            document.body.removeChild(bullets[i]);
+                            bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                        } else {
+                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
+                        }
+                    } catch {
+
+                    }
+                    
                 }
             }, 10
         );
