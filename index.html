@@ -228,7 +228,7 @@
         image_enemy_1.style.top = enemyY1 + "px";
     */
 
-    // =====================================================================================
+    // ==========Key Down========================================================================
         var bullets = [];
         document.addEventListener("keydown", (event) => {
             const key = event.key;
@@ -260,8 +260,6 @@
             image.style.left = imageX + "px";
         }
 
-        
-
         function check_enemy_health(image){
             if (image == image_enemy){
                 if(level==5){
@@ -289,7 +287,6 @@
                         return false;
                     }
                 }
-                
             }
             if (image == image_enemy_1){
                 if(level==1 || level==2 || level==3 || level==4){
