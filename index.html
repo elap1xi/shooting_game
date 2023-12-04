@@ -14,6 +14,16 @@
             overflow: hidden;
         }
 
+        #lvl_chg_rec {
+            position: absolute;
+            width: 1100px;
+            height: 900px;
+            background-color: rgb(151, 151, 151);
+            left: 410px;
+            top: 10px;
+
+        }
+
         #vertical_line_L {
             position: absolute;
             width: 2px;
@@ -48,7 +58,7 @@
     <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
     <div id="vertical_line_L"></div>
     <div id="vertical_line_R"></div>
-    <div id="imagePosition">(x)</div>
+    <div id="lvl_chg_rec"></div>
     <div id="log"></div>
     <script>
         let level = 1;
@@ -62,6 +72,7 @@
         image_enemy_2.style.visibility = "hidden";
         image_enemy_3.style.visibility = "hidden";
         image_enemy_4.style.visibility = "hidden";
+        lvl_chg_rec.style.visibility = "hidden";
         const image = document.getElementById("image");
         const imagePosition = document.getElementById("imagePosition");
 
@@ -106,7 +117,7 @@
 
         // X range : -270 ~ 270
         // Y range : -10 ~ 250
-
+        
         function rdm_x(v) {
             if(v == 'x'){
                 return Math.floor(Math.random() * (270 - (-270) + 1)) - 270;
@@ -120,7 +131,8 @@
                 return Math.floor(Math.random() * (250 - (220) + 1)) + 220;
             }
         }
-
+        
+        any_move = true;
         spawn(1);
         set_health();
         function spawn(level){
@@ -159,13 +171,20 @@
                 // win
             }
         }
-        
+
+        function level_change(){
+            any_move = false;
+            lvl_chg_rec.style.visibility = null;
+            setTimeout(()=>{ any_move = true; lvl_chg_rec.style.visibility = "hidden"; }, 5000)
+            level=level+1;
+        }
+
         setInterval(
             function () {
-                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}`;
+                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>move_able : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}`;
                 if(!lv_5 && !lv_6 && !lv_9 && !lv_10){
                     if(image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden"){
-                        level=level+1;
+                        level_change()
                         if(level==5){
                             lv_5=true;
                             spawn(level);
@@ -175,7 +194,7 @@
                     }
                 } else if(lv_5 && !lv_6 && !lv_9 && !lv_10){
                     if(image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden"){
-                        level=level+1;
+                        level_change()
                         if(level==6){
                             lv_6=true;
                             lv_5=false;
@@ -184,7 +203,7 @@
                     }
                 } else if(!lv_5 && lv_6 && !lv_9 && !lv_10){
                     if(image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden"){
-                        level=level+1;
+                        level_change()
                         if(level==9){
                             lv_9=true;
                             lv_6=false;
@@ -195,7 +214,7 @@
                     }
                 } else if(!lv_5 && !lv_6 && lv_9 && !lv_10){
                     if(image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden"){
-                        level=level+1;
+                        level_change()
                         if(level==6){
                             lv_10=true;
                             lv_9=false;
@@ -204,11 +223,10 @@
                     }
                 } else if(!lv_5 && !lv_6 && !lv_9 && lv_10){
                     if(image_enemy.style.visibility == "hidden"){
-                        level=level+1;
+                        level_change()
                         
                     }
                 }
-
             }, 1000
         );
 
@@ -229,23 +247,31 @@
     */
 
     // ==========Key Down========================================================================
-        var bullets = [];
-        document.addEventListener("keydown", (event) => {
-            const key = event.key;
-            if (key === "a" || key === "d") {
+    var bullets = [];
+    var lf = Date.now();
+    let t = 50;
+    document.addEventListener("keydown", (event) => {
+        const key = event.key;
+        if(any_move){
+            if(key === "a" || key === "d") {
                 moveImage(key);
-            } else if (key == 'k'){
-                var bullet = document.createElement('div');
-                bullet.style.width = '4px';
-                bullet.style.height = '12px';
-                bullet.style.backgroundColor = 'grey';
-                bullet.style.position = 'absolute';
-                bullet.style.left = image.offsetLeft+28 + 'px';
-                bullet.style.top = image.offsetTop + 'px';
-                document.body.appendChild(bullet);
-                bullets.push(bullet);
+            } else if(key == 'k'){
+                var now = Date.now();
+                if(now - lf > t){
+                    var bullet = document.createElement('div');
+                    bullet.style.width = '4px';
+                    bullet.style.height = '12px';
+                    bullet.style.backgroundColor = 'grey';
+                    bullet.style.position = 'absolute';
+                    bullet.style.left = image.offsetLeft+28 + 'px';
+                    bullet.style.top = image.offsetTop + 'px';
+                    document.body.appendChild(bullet);
+                    bullets.push(bullet);
+                    lf = now;
+                }
             }
-        });
+        }
+    });
 
         function sleep(s) {
             return new Promise(resolve => setTimeout(resolve, s * 1000));
@@ -463,8 +489,7 @@
             }
         }
 
-
-        speed = 2;
+        speed = 7;
         setInterval(
             function () {
                 for (var i = 0; i < bullets.length; i++) {
@@ -480,11 +505,7 @@
                             // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                        } else {
-                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
-                        }
-                        
-                        if (checkCollision(bullets[i], image_enemy_1)){
+                        } else if (checkCollision(bullets[i], image_enemy_1)){
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1);
                             if(check_enemy_health(image_enemy_1)){
@@ -494,11 +515,7 @@
                             // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                        } else {
-                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
-                        }
-
-                        if (checkCollision(bullets[i], image_enemy_2)){
+                        } else if (checkCollision(bullets[i], image_enemy_2)){
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1);
                             if(check_enemy_health(image_enemy_2)){
@@ -508,11 +525,7 @@
                             // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                        } else {
-                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
-                        }
-
-                        if (checkCollision(bullets[i], image_enemy_3)){
+                        } else if (checkCollision(bullets[i], image_enemy_3)){
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1);
                             if(check_enemy_health(image_enemy_3)){
@@ -522,11 +535,7 @@
                             // 도달한 경우 또는 적 이미지와 충돌한 경우, 해당 총알을 제거
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                        } else {
-                            bullets[i].style.top = (bullets[i].offsetTop - speed) + "px";
-                        }
-
-                        if (checkCollision(bullets[i], image_enemy_4)){
+                        } else if (checkCollision(bullets[i], image_enemy_4)){
                             document.body.removeChild(bullets[i]);
                             bullets.splice(i, 1);
                             if(check_enemy_health(image_enemy_4)){
@@ -546,12 +555,6 @@
                 }
             }, 10
         );
-
-        updateImagePosition();
-
-        function updateImagePosition() {
-            imagePosition.textContent = `(${e14_z})`;
-        }
         
         </script>
 </body>
