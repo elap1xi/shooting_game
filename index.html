@@ -15,7 +15,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden
+            overflow: hidden;
         }
         
         .page {
@@ -97,7 +97,7 @@
             font-size: 50px;
             width: 48%;
             height: 100%;
-            background-color: rgb(150, 150, 150);
+            background-color: rgb(255, 255, 255);
             left: 26%;
             top: 10px;
             transition: all 1s;
@@ -137,50 +137,45 @@
 <body>
     <div class="page" id="mainpg">
         <div class="container_main">
-            <h1>Welcome to the game!</h1>
-            <button id="start" class="button">Start</button>
+            <h1>Welcome to the shooting game!</h1>
+            <button class="button" id="start">Start</button>
         </div>
     </div>
 
     <div class="page hide" id="transpg">
-        <div id="rec_n_spoiler"></div>
-        <img id="image" src="images/obj.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy" src="images/enemy.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-        <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+            <img id="image" src="images/obj.png" alt="이미지" width="60px" height="60px">
+            <img id="image_enemy" src="images/enemy.png" alt="이미지" width="60px" height="60px">
+            <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+            <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+            <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
+            <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
         <div id="vertical_line_L"></div>
         <div id="vertical_line_R"></div>
-        <div class="rec" id="start_rec"></div>
-        <div class="rec hide" id="lvl_chg_rec">Lv. (test)</div>
+        <div id="rec_n_spoiler"></div>
+            <div class="rec" id="start_rec"></div>
+            <div class="rec hide" id="lvl_chg_rec">Lv. (test)</div>
         <div id="log"></div>
     </div>
+
     <script>
-        //======= CONFIG ========
+        // ======= CONFIG ========
         let level = 1;
         let user_h = 30;
         let user_hh = 2;
-        let any_move = true;
-        let bullet_term = 50; // ms
+        let any_move = false;
+        let bullet_term = 50;   // ms
         let bullet_speed = 7;
-        //=======================
+        // =======================
         var lf = Date.now();
         var bullets = [];
         var bullet_e = [];
         var chk_lvl = [];
         var keyPressed = [];
-        let lv_5 = false;
-        let lv_6 = false;
-        let lv_9 = false;
-        let lv_10 = false;
-        image_enemy.style.visibility = "hidden";
-        image_enemy_1.style.visibility = "hidden";
-        image_enemy_2.style.visibility = "hidden";
-        image_enemy_3.style.visibility = "hidden";
-        image_enemy_4.style.visibility = "hidden";
-        rec_n_spoiler.style.visibility = null;
-        // rec_n_spoiler.style.visibility = "hidden";
+        let lv_5 = false;   let lv_6 = false;
+        let lv_9 = false;   let lv_10 = false;
+        image_enemy.style.visibility = "hidden";    image_enemy_1.style.visibility = "hidden";
+        image_enemy_2.style.visibility = "hidden";  image_enemy_3.style.visibility = "hidden";
+        image_enemy_4.style.visibility = "hidden";  rec_n_spoiler.style.visibility = "hidden";
         const image = document.getElementById("image");
         const imagePosition = document.getElementById("imagePosition");
 
@@ -240,48 +235,50 @@
         }
 
         function spawn(level) {
-            if (level >= 1 && level <= 4) {
-                set_health();
-                pos(image_enemy, -500, -500);
-                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
-                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                pos(image_enemy_4, -500, -500);
-            }
-            else if (level == 5) {
-                set_health();
-                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
-                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                pos(image_enemy_4, -500, -500);
-            }
-            else if (level >= 6 && level <= 8) {
-                set_health();
-                pos(image_enemy, -500, -500);
-                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
-                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
-            }
-            else if (level == 9) {
-                set_health();
-                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
-                pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
-            }
-            else if (level == 10) {
-                set_health();
-                pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
-                pos(image_enemy_1, -500, -500);
-                pos(image_enemy_2, -500, -500);
-                pos(image_enemy_3, -500, -500);
-                pos(image_enemy_4, -500, -500);
-            } else {
-                // win
-            }
+            setTimeout(()=> {
+                if (level >= 1 && level <= 4) {
+                    set_health();
+                    pos(image_enemy, -500, -500);
+                    pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                    pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                    pos(image_enemy_4, -500, -500);
+                }
+                else if (level == 5) {
+                    set_health();
+                    pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                    pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                    pos(image_enemy_4, -500, -500);
+                }
+                else if (level >= 6 && level <= 8) {
+                    set_health();
+                    pos(image_enemy, -500, -500);
+                    pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                    pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                    pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
+                }
+                else if (level == 9) {
+                    set_health();
+                    pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
+                    pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
+                    pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
+                }
+                else if (level == 10) {
+                    set_health();
+                    pos(image_enemy, rdm_x('x'), rdm_x('y-2'));
+                    pos(image_enemy_1, -500, -500);
+                    pos(image_enemy_2, -500, -500);
+                    pos(image_enemy_3, -500, -500);
+                    pos(image_enemy_4, -500, -500);
+                } else {
+                    // win
+                }
+            }, 500)
         }
 
 
@@ -289,13 +286,14 @@
         set_health();
         function level_change() {
             any_move = false;
+            level = level + 1;
+            document.getElementById('lvl_chg_rec').innerHTML = `Lv. ${level}`;
             document.getElementById('lvl_chg_rec').classList.remove('hide');
             setTimeout(() => { 
                 any_move = true;
                 rec_n_spoiler.style.visibility = "hidden";
                 document.getElementById('lvl_chg_rec').classList.add('hide');
-            }, 5000)
-            level = level + 1;
+            }, 3000)
         }
 
         setInterval(
@@ -688,10 +686,10 @@
             document.getElementById('mainpg').classList.add('hide');
             document.getElementById('transpg').classList.remove('hide');
             document.getElementById('start_rec').innerHTML = "Ready";
-            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "3" }, 2000);
-            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "2" }, 3000);
-            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "1" }, 4000);
-            setTimeout(()=>{ document.getElementById('start_rec').classList.add('hide'); }, 5000);
+            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "3"; }, 2000);
+            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "2"; }, 3000);
+            setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "1"; }, 4000);
+            setTimeout(()=>{ document.getElementById('start_rec').classList.add('hide'); any_move = true; }, 5000);
         });
 
     </script>
