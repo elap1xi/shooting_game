@@ -77,10 +77,10 @@
             position: absolute;
             text-align: center;
             font-size: 50px;
-            width: 48%;
+            width: 49.8%;
             height: 100%;
             background-color: rgb(255, 255, 255);
-            left: 26%;
+            left: 25.1%;
             transition: all 1s;
             display: flex;
             justify-content: center;
@@ -89,16 +89,26 @@
 
         #rec_n_spoiler {
             position: absolute;
-            text-align: center;
-            font-size: 50px;
-            width: 49%;
+            width: 49.8%;
             height: 100%;
             background-color: rgb(255, 255, 255);
-            left: 25.5%;
-            transition: all 1s;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            left: 25.1%;
+        }
+
+        #rec_n_spoiler_2 {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+            background-color: rgb(255, 255, 255);
+            left: 0%;
+        }
+
+        #rec_n_spoiler_3 {
+            position: absolute;
+            width: 25%;
+            height: 100%;
+            background-color: rgb(255, 255, 255);
+            left: 75%;
         }
 
         #vertical_line_L {
@@ -120,6 +130,10 @@
         #image, #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4 {
             position: absolute;
         }
+
+        #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4 {
+            transition: left 8s;
+        }
         
         #log {
             top: 10px;
@@ -138,16 +152,18 @@
     </div>
 
     <div class="page hide" id="transpg">
-            <img id="image" src="images/obj.png" alt="이미지" width="60px" height="60px">
-            <img id="image_enemy" src="images/enemy.png" alt="이미지" width="60px" height="60px">
-            <img id="image_enemy_1" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-            <img id="image_enemy_2" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-            <img id="image_enemy_3" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-            <img id="image_enemy_4" src="images/enemy_zzol.png" alt="이미지" width="60px" height="60px">
-            <img id="explosion" src="images/explosion.png" alt="이미지" width="60px" height="60px">
+            <img id="image" src="images/obj.png"  alt="img" width="60px" height="60px">
+            <img id="image_enemy" src="images/enemy.png" alt="img" width="60px" height="60px">
+            <img id="image_enemy_1" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
+            <img id="image_enemy_2" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
+            <img id="image_enemy_3" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
+            <img id="image_enemy_4" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
+            <!-- <img id="explosion" src="images/explosion.png" alt="img" width="60px" height="60px"> -->
         <div id="vertical_line_L"></div>
         <div id="vertical_line_R"></div>
         <div id="rec_n_spoiler"></div>
+        <div id="rec_n_spoiler_2"></div>
+        <div id="rec_n_spoiler_3"></div>
             <div class="rec" id="start_rec"></div>
             <div class="rec hide" id="lvl_chg_rec">Lv. (test)</div>
         <div id="log"></div>
@@ -156,9 +172,9 @@
     <script>
         // ======= CONFIG ========
         let level = 1;
+        let score = 5000;
         let user_h = 30;
         let user_hh = 2;
-        let any_move = false;
         let bullet_term = 50;   // ms
         let bullet_speed = 7;
         // =======================
@@ -167,6 +183,8 @@
         var bullet_e = [];
         var chk_lvl = [];
         var keyPressed = [];
+        let any_move = false;
+        let started = false;
         let lv_5 = true;   let lv_6 = true;
         let lv_9 = true;   let lv_10 = true;
         image_enemy.style.visibility = "hidden";    image_enemy_1.style.visibility = "hidden";
@@ -229,38 +247,44 @@
             }
         }
 
-        // setInterval(() => {
-        //     if (level >= 1 && level <= 4) {
-        //         move(image_enemy_1, rdm_x('x'));
-        //         move(image_enemy_2, rdm_x('x'));
-        //         move(image_enemy_3, rdm_x('x'));
-        //     }
-        //     else if (level == 5) {
-        //         move(image_enemy, rdm_x('x'));
-        //         move(image_enemy_1, rdm_x('x'));
-        //         move(image_enemy_2, rdm_x('x'));
-        //         move(image_enemy_3, rdm_x('x'));
-        //     }
-        //     else if (level >= 6 && level <= 8) {
-        //         move(image_enemy_1, rdm_x('x'));
-        //         move(image_enemy_2, rdm_x('x'));
-        //         move(image_enemy_3, rdm_x('x'));
-        //         move(image_enemy_4, rdm_x('x'));
-        //     }
-        //     else if (level == 9) {
-        //         move(image_enemy, rdm_x('x'));
-        //         move(image_enemy_1, rdm_x('x'));
-        //         move(image_enemy_2, rdm_x('x'));
-        //         move(image_enemy_3, rdm_x('x'));
-        //         move(image_enemy_4, rdm_x('x'));
-        //     }
-        //     else if (level == 10) {
-        //         set_health();
-        //         move(image_enemy, rdm_x('x'));
-        //     } else {
-        //         // win
-        //     }
-        // }, 3000);
+        function move(img, x){
+            img.style.left = `${x}%`;
+            setTimeout(()=>{
+                img.style.transition = '';
+            }, 3000);
+        }
+
+        setInterval(() => {
+            if (level >= 1 && level <= 4) {
+                if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
+                if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
+                if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+            }
+            else if (level == 5) {
+                if(image_enemy.style.visibility !== "hidden")move(image_enemy, rdm_x('x'));
+                if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
+                if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
+                if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+            }
+            else if (level >= 6 && level <= 8) {
+                if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
+                if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
+                if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+                if(image_enemy_4.style.visibility !== "hidden")move(image_enemy_4, rdm_x('x'));
+            }
+            else if (level == 9) {
+                if(image_enemy.style.visibility !== "hidden")move(image_enemy, rdm_x('x'));
+                if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
+                if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
+                if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+                if(image_enemy_4.style.visibility !== "hidden")move(image_enemy_4, rdm_x('x'));
+            }
+            else if (level == 10) {
+                if(image_enemy.style.visibility !== "hidden")move(image_enemy, rdm_x('x'));
+            } else {
+                // win
+            }
+        }, 5000);
 
         function spawn(level) {
             setTimeout(()=> {
@@ -271,6 +295,7 @@
                     pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
                     pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
                     pos(image_enemy_4, -500, -500);
+                    started = true;
                 }
                 else if (level == 5) {
                     set_health();
@@ -323,52 +348,62 @@
             }, 3000)
         }
 
+        const score_interval = setInterval(() => {
+            score -= 1;
+            if (level === 11) {
+                console.log(score);
+                clearInterval(intervalId);
+            }
+        }, 1000);
+
         setInterval(
             function () {
-                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>moving : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}`;
-                if (lv_5 && lv_6 && lv_9 && lv_10) {
-                    if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
-                        rec_n_spoiler.style.visibility = null;
-                        level_change()
-                        if (level == 5) {
-                            lv_5 = false;
-                            spawn(level)
-                        } else {
-                            spawn(level)
+                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>moving : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}<br><br>Score : ${score}`;
+                if(started){
+                    if (lv_5 && lv_6 && lv_9 && lv_10) {
+                        if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
+                            rec_n_spoiler.style.visibility = null;
+                            level_change()
+                            if (level == 5) {
+                                lv_5 = false;
+                                spawn(level)
+                            } else {
+                                spawn(level)
+                            }
                         }
-                    }
-                } else if (!lv_5 && lv_6 && lv_9 && lv_10) {
-                    if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
-                        level_change()
-                        if (level == 6) {
-                            lv_6 = false;
-                            spawn(6)
+                    } else if (!lv_5 && lv_6 && lv_9 && lv_10) {
+                        if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
+                            level_change()
+                            if (level == 6) {
+                                lv_6 = false;
+                                spawn(6)
+                            }
                         }
-                    }
-                } else if (!lv_5 && !lv_6 && lv_9 && lv_10) {
-                    if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
-                        level_change()
-                        if (level == 9) {
-                            lv_9 = false;
-                            spawn(level)
-                        } else {
-                            spawn(level)
+                    } else if (!lv_5 && !lv_6 && lv_9 && lv_10) {
+                        if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
+                            level_change()
+                            if (level == 9) {
+                                lv_9 = false;
+                                spawn(level)
+                            } else {
+                                spawn(level)
+                            }
                         }
-                    }
-                } else if (!lv_5 && !lv_6 && !lv_9 && lv_10) {
-                    if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
-                        level_change()
-                        if (level == 10) {
-                            lv_10 = false;
-                            spawn(10)
+                    } else if (!lv_5 && !lv_6 && !lv_9 && lv_10) {
+                        if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
+                            level_change()
+                            if (level == 10) {
+                                lv_10 = false;
+                                spawn(10)
+                            }
                         }
-                    }
-                } else if (!lv_5 && !lv_6 && !lv_9 && !lv_10) {
-                    console.log("AA");
-                    if (image_enemy.style.visibility == "hidden") {
-                        console.log("Game over");
-                        document.getElementById('lvl_chg_rec').innerHTML = `Level Complete!`;
-                        document.getElementById('lvl_chg_rec').classList.remove('hide');
+                    } else if (!lv_5 && !lv_6 && !lv_9 && !lv_10) {
+                        console.log("AA");
+                        if (image_enemy.style.visibility == "hidden") {
+                            console.log("Game over");
+                            document.getElementById('lvl_chg_rec').innerHTML = `Level Complete!`;
+                            document.getElementById('lvl_chg_rec').classList.remove('hide');
+                        }
                     }
                 }
             }, 1000
@@ -630,7 +665,7 @@
                 await sleep(0.08);
             }
             image.style.visibility = "hidden";
-            image.style.left = 0;
+            image.style.left = `0%`;
         }
 
         // 이미지와 bullet의 충돌 체크
@@ -712,7 +747,7 @@
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "3"; }, 2000);
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "2"; }, 3000);
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "1"; }, 4000);
-            setTimeout(()=>{ document.getElementById('start_rec').classList.add('hide'); any_move = true; }, 5000);
+            setTimeout(()=>{ document.getElementById('start_rec').classList.add('hide'); any_move = true; score = 5000; }, 5000);
         });
 
     </script>
