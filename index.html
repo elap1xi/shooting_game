@@ -37,7 +37,7 @@
             opacity: 1;
         }
 
-        .button {
+        .button, .btn {
             text-decoration: none;
             color: #ffffff;
             font-size: 18px;
@@ -47,12 +47,20 @@
             border-radius: 5px;
             border: none;
             border-left: 20px;
-            background-color: #333333;
             cursor: pointer;
         }
 
-        .button:hover {
-            background-color: #5c5c5c;
+        .button {
+            background-color: #333333;
+        }
+
+        .btn {
+            background-color: #505050;
+        }
+
+        .button:hover, .btn:hover {
+            background-color: #747474;
+            transform: scale(1.02);
         }
 
         .rec {
@@ -71,6 +79,15 @@
         .rec.show {
             transform: translateY(0);
             opacity: 1;
+        }
+
+        #ready {
+            position: absolute;
+            left: 26%;
+            top: 60%;
+            width: 48%;
+            transition: 3s;
+            z-index: 1;
         }
 
         #lvl_chg_rec, #start_rec {
@@ -127,18 +144,59 @@
             right: 25%;
         }
 
-        #image, #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4 {
+        #image, #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4,
+        #hp1, #hp2, #hp3, #hp4, #hp5 {
             position: absolute;
         }
 
         #image_enemy, #image_enemy_1, #image_enemy_2, #image_enemy_3, #image_enemy_4 {
             transition: left 8s;
         }
+    
+        #scr {
+            position: absolute;
+            text-align: center;
+            font-size: 25px;
+            right: 2%;
+            top: 2%;
+            z-index: 1;            
+        }
+
+        #hp {
+            position: absolute;
+            text-align: left;
+            font-size: 20px;
+            left: 2%;
+            bottom: 40%;
+        }
         
         #log {
             top: 10px;
             right: 20px;
             position: absolute;
+        }
+
+        #leftContainer {
+            text-align: left;
+            position: absolute;
+            top: 30%; 
+            left: 2%; 
+            background-color: rgb(232, 232, 232); 
+            padding: 20px; 
+            border-radius: 5px;
+            font-size: 20px;
+        }
+
+        #discription {
+            text-align: left;
+            position: absolute;
+            top: 2%; 
+            left: 2%; 
+            background-color: rgb(232, 232, 232); 
+            padding: 20px; 
+            border-radius: 5px;
+            font-size: 15px;
+            z-index: 1;
         }
     </style>
 </head>
@@ -152,21 +210,25 @@
     </div>
 
     <div class="page hide" id="transpg">
-            <img id="image" src="images/obj.png"  alt="img" width="60px" height="60px">
+        <img id="image" src="images/obj.png"  alt="img" width="60px" height="60px">
             <img id="image_enemy" src="images/enemy.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_1" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_2" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_3" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_4" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
-            <!-- <img id="explosion" src="images/explosion.png" alt="img" width="60px" height="60px"> -->
+        <div id="discription">조작법<br> 좌/우 이동 : A/D<br> 총알 발사 : K<br><br>빠르게 클리어 할수록,<br>버려지는 총알의 개수가 적을수록<br> 점수가 더 높아집니다.</div>
+        <div id="scr">현재 점수 : (Null)</div>
         <div id="vertical_line_L"></div>
         <div id="vertical_line_R"></div>
         <div id="rec_n_spoiler"></div>
         <div id="rec_n_spoiler_2"></div>
         <div id="rec_n_spoiler_3"></div>
+        <div id="leftContainer"></div>
+        <div id="hp"></div>
+        <button class="btn" id="ready">Yes</button>
             <div class="rec" id="start_rec"></div>
-            <div class="rec hide" id="lvl_chg_rec">Lv. (test)</div>
-        <div id="log"></div>
+            <div class="rec hide" id="lvl_chg_rec">Lv. (Null)</div>
+        <!-- <div id="log"></div> -->
     </div>
 
     <script>
@@ -187,9 +249,12 @@
         let started = false;
         let lv_5 = true;   let lv_6 = true;
         let lv_9 = true;   let lv_10 = true;
+        let enemy_random_pos = 0;
+        let enemy_vertical_pos = 0;
         image_enemy.style.visibility = "hidden";    image_enemy_1.style.visibility = "hidden";
         image_enemy_2.style.visibility = "hidden";  image_enemy_3.style.visibility = "hidden";
         image_enemy_4.style.visibility = "hidden";  rec_n_spoiler.style.visibility = "hidden";
+        scr.style.visibility = "hidden";
         const image = document.getElementById("image");
         const imagePosition = document.getElementById("imagePosition");
 
@@ -203,13 +268,11 @@
         image.style.left = imageX + "px";
         image.style.top = imageY + "px";
         // ==============================================
+
         // 이미지 위치 제한 범위
         const imageMinX = window.innerWidth*0.26; // 왼쪽 수직선 오른쪽 끝
         const imageMaxX = window.innerWidth*0.7; // 오른쪽 수직선 왼쪽 끝
         // ==============================================
-
-        let enemy_random_pos = 0;
-        let enemy_vertical_pos = 0;
 
         function pos(image, enemy_random_pos, enemy_vertical_pos) {
             let enemyX = (centerX - (image.width / 2)) + enemy_random_pos;
@@ -222,13 +285,13 @@
         }
 
         function set_health() {
-            e14_z = 19; e14_z2 = 19; e14_z3 = 19; e14_z4 = 19;
-            e5_b = 99;
-            e5_z = 19; e5_z2 = 19; e5_z3 = 19; e5_z4 = 19;
-            e68_z = 39; e68_z2 = 39; e68_z3 = 39; e68_z4 = 39;
-            e9_b = 149;
-            e9_z = 49; e9_z2 = 49; e9_z3 = 49; e9_z4 = 49;
-            e10_b = 199;
+            e14_z = 10; e14_z2 = 10; e14_z3 = 10; e14_z4 = 10;
+            e5_b = 50;
+            e5_z = 10; e5_z2 = 10; e5_z3 = 10; e5_z4 = 10;
+            e68_z = 20; e68_z2 = 20; e68_z3 = 20; e68_z4 = 20;
+            e9_b = 75;
+            e9_z = 25; e9_z2 = 25; e9_z3 = 25; e9_z4 = 25;
+            e10_b = 100;
         }
 
         function rdm_x(v) {
@@ -249,22 +312,35 @@
 
         function move(img, x){
             img.style.left = `${x}%`;
-            setTimeout(()=>{
-                img.style.transition = '';
-            }, 3000);
         }
+
+        setInterval(() => {
+            if (level >= 1 && level <= 4) {
+                document.getElementById("leftContainer").innerHTML = `<h4>Enemy Health</h4>적1 : ${e14_z}<br>적2 : ${e14_z2}<br>적3 : ${e14_z3}<br>적4 : ${e14_z4}`;
+            } else if (level == 5) {
+                document.getElementById("leftContainer").innerHTML = `<h4>Enemy Health</h4>적1 : ${e5_z}<br>적2 : ${e5_z2}<br>적3 : ${e5_z3}<br>적4 : ${e5_z4}<br>보스 : ${e5_b}`;
+            } else if (level >= 6 && level <= 8) {
+                document.getElementById("leftContainer").innerHTML = `<h4>Enemy Health</h4>적1 : ${e68_z}<br>적2 : ${e68_z2}<br>적3 : ${e68_z3}<br>적4 : ${e68_z4}`;
+            } else if (level == 9) {
+                document.getElementById("leftContainer").innerHTML = `<h4>Enemy Health</h4>적1 : ${e9_z}<br>적2 : ${e9_z2}<br>적3 : ${e9_z3}<br>적4 : ${e9_z4}<br>보스 : ${e9_b}`;
+            } else if (level == 10) {
+                document.getElementById("leftContainer").innerHTML = `<h4>Enemy Health</h4>보스 : ${e10_b}`;
+            }
+        }, 5);
 
         setInterval(() => {
             if (level >= 1 && level <= 4) {
                 if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
                 if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
                 if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+                if(image_enemy_4.style.visibility !== "hidden")move(image_enemy_4, rdm_x('x'));
             }
             else if (level == 5) {
                 if(image_enemy.style.visibility !== "hidden")move(image_enemy, rdm_x('x'));
                 if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
                 if(image_enemy_2.style.visibility !== "hidden")move(image_enemy_2, rdm_x('x'));
                 if(image_enemy_3.style.visibility !== "hidden")move(image_enemy_3, rdm_x('x'));
+                if(image_enemy_4.style.visibility !== "hidden")move(image_enemy_4, rdm_x('x'));
             }
             else if (level >= 6 && level <= 8) {
                 if(image_enemy_1.style.visibility !== "hidden")move(image_enemy_1, rdm_x('x'));
@@ -294,7 +370,7 @@
                     pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
                     pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
                     pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                    pos(image_enemy_4, -500, -500);
+                    pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
                     started = true;
                 }
                 else if (level == 5) {
@@ -303,7 +379,7 @@
                     pos(image_enemy_1, rdm_x('x'), rdm_x('y-1'));
                     pos(image_enemy_2, rdm_x('x'), rdm_x('y-2'));
                     pos(image_enemy_3, rdm_x('x'), rdm_x('y-3'));
-                    pos(image_enemy_4, -500, -500);
+                    pos(image_enemy_4, rdm_x('x'), rdm_x('y-4'));
                 }
                 else if (level >= 6 && level <= 8) {
                     set_health();
@@ -350,15 +426,16 @@
 
         const score_interval = setInterval(() => {
             score -= 1;
+            document.getElementById('scr').innerHTML = `현재 점수 : ${score}`;
             if (level === 11) {
                 console.log(score);
                 clearInterval(intervalId);
             }
         }, 1000);
 
-        setInterval(
+        const gm = setInterval(
             function () {
-                document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>moving : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}<br><br>Score : ${score}`;
+            // document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>moving : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}<br><br>Score : ${score}`; // (TEST)
                 if(started){
                     if (lv_5 && lv_6 && lv_9 && lv_10) {
                         if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
@@ -398,32 +475,17 @@
                             }
                         }
                     } else if (!lv_5 && !lv_6 && !lv_9 && !lv_10) {
-                        console.log("AA");
                         if (image_enemy.style.visibility == "hidden") {
-                            console.log("Game over");
-                            document.getElementById('lvl_chg_rec').innerHTML = `Level Complete!`;
+                            level = level + 1;
+                            document.getElementById('lvl_chg_rec').innerHTML = `Level Complete!<br>Score : ${score}`;   // 최종점수
                             document.getElementById('lvl_chg_rec').classList.remove('hide');
+                            scr.style.visibility = "hidden";
+                            clearInterval(gm);
                         }
                     }
                 }
             }, 1000
         );
-
-        /*
-            // enemy boss
-            let enemyX = (centerX - (image_enemy.width / 2)) + enemy_random_pos;
-            let enemyY = (centerY - (image_enemy.height * 10)) + enemy_vertical_pos;
-    
-            image_enemy.style.left = enemyX + "px";
-            image_enemy.style.top = enemyY + "px";
-    
-            // enemy 1
-            let enemyX1 = enemyX + 60;
-            let enemyY1 = enemyY;
-    
-            image_enemy_1.style.left = enemyX1 + "px";
-            image_enemy_1.style.top = enemyY1 + "px";
-        */
 
         // ========== Key Down ==========
         window.onload = function () {
@@ -463,7 +525,6 @@
                     }
                 }
             }
-
         }
 
         function sleep(s) {
@@ -665,7 +726,7 @@
                 await sleep(0.08);
             }
             image.style.visibility = "hidden";
-            image.style.left = `0%`;
+            image.style.top = `-500px`;
         }
 
         // 이미지와 bullet의 충돌 체크
@@ -681,6 +742,14 @@
                 return false;
             }
         }
+
+        setInterval(() => {
+            if (e5_b==0 && e9_b==0 && e10_b==0) { killed_enemy(image_enemy); }
+            if (e14_z1==0 && e5_z1==0 && e68_z1==0 && e9_z1==0) { killed_enemy(image_enemy1); }
+            if (e14_z2==0 && e5_z2==0 && e68_z2==0 && e9_z2==0) { killed_enemy(image_enemy2); }
+            if (e14_z3==0 && e5_z3==0 && e68_z3==0 && e9_z3==0) { killed_enemy(image_enemy3); }
+            if (e14_z4==0 && e5_z4==0 && e68_z4==0 && e9_z4==0) { killed_enemy(image_enemy4); }
+        }, 500);
 
         setInterval(
             function () {
@@ -728,6 +797,7 @@
                             } else if (bullets[i].offsetTop <= 0) {
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
+                                score = score - 10;
                             } else {
                                 bullets[i].style.top = (bullets[i].offsetTop - bullet_speed) + "px";
                             }
@@ -743,12 +813,22 @@
             e.preventDefault();
             document.getElementById('mainpg').classList.add('hide');
             document.getElementById('transpg').classList.remove('hide');
-            document.getElementById('start_rec').innerHTML = "Ready";
+            document.getElementById('start_rec').innerHTML = "Ready?";
+        });
+
+        document.querySelector('#ready').addEventListener('click', function(e) {
+            ready.style.top = '-50%';
+            ready.style.opacity = "0%";
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "3"; }, 2000);
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "2"; }, 3000);
             setTimeout(()=>{ document.getElementById('start_rec').innerHTML = "1"; }, 4000);
-            setTimeout(()=>{ document.getElementById('start_rec').classList.add('hide'); any_move = true; score = 5000; }, 5000);
-        });
+            setTimeout(()=>{ 
+                document.getElementById('start_rec').classList.add('hide'); 
+                any_move = true; 
+                score = 5000;
+                scr.style.visibility = null;
+            }, 5000);
+        })
 
     </script>
 </body>
