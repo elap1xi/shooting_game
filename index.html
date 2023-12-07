@@ -232,11 +232,12 @@
     </div>
 
     <script>
+        // if(mail=="22026@daehyun.hs.kr"){
+        //     score = 5000;
+        // }
         // ======= CONFIG ========
         let level = 1;
-        let score = 5000;
-        let user_h = 30;
-        let user_hh = 2;
+        let score = 1500;
         let bullet_term = 50;   // ms
         let bullet_speed = 7;
         // =======================
@@ -285,12 +286,12 @@
         }
 
         function set_health() {
-            e14_z = 10; e14_z2 = 10; e14_z3 = 10; e14_z4 = 10;
-            e5_b = 50;
+            e14_z = 5; e14_z2 = 5; e14_z3 = 5; e14_z4 = 5;
+            e5_b = 25;
             e5_z = 10; e5_z2 = 10; e5_z3 = 10; e5_z4 = 10;
             e68_z = 20; e68_z2 = 20; e68_z3 = 20; e68_z4 = 20;
-            e9_b = 75;
-            e9_z = 25; e9_z2 = 25; e9_z3 = 25; e9_z4 = 25;
+            e9_b = 50;
+            e9_z = 30; e9_z2 = 30; e9_z3 = 30; e9_z4 = 30;
             e10_b = 100;
         }
 
@@ -425,7 +426,7 @@
         }
 
         const score_interval = setInterval(() => {
-            score -= 1;
+            score = score - 3;
             document.getElementById('scr').innerHTML = `현재 점수 : ${score}`;
             if (level === 11) {
                 console.log(score);
@@ -745,7 +746,7 @@
 
         setInterval(() => {
             if (e5_b==0 && e9_b==0 && e10_b==0) { killed_enemy(image_enemy); }
-            if (e14_z1==0 && e5_z1==0 && e68_z1==0 && e9_z1==0) { killed_enemy(image_enemy1); }
+            if (e14_z==0 && e5_z==0 && e68_z==0 && e9_z==0) { killed_enemy(image_enemy1); }
             if (e14_z2==0 && e5_z2==0 && e68_z2==0 && e9_z2==0) { killed_enemy(image_enemy2); }
             if (e14_z3==0 && e5_z3==0 && e68_z3==0 && e9_z3==0) { killed_enemy(image_enemy3); }
             if (e14_z4==0 && e5_z4==0 && e68_z4==0 && e9_z4==0) { killed_enemy(image_enemy4); }
@@ -763,6 +764,7 @@
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1);
                                 if (check_enemy_health(image_enemy)) {
+                                    score = score + 7;
                                     killed_enemy(image_enemy);
                                 }
                             
@@ -770,6 +772,7 @@
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1);
                                 if (check_enemy_health(image_enemy_1)) {
+                                    score = score + 3;
                                     killed_enemy(image_enemy_1);
                                 }
                             
@@ -777,6 +780,7 @@
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1);
                                 if (check_enemy_health(image_enemy_2)) {
+                                    score = score + 3;
                                     killed_enemy(image_enemy_2);
                                 }
                             
@@ -784,6 +788,7 @@
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1);
                                 if (check_enemy_health(image_enemy_3)) {
+                                    score = score + 3;
                                     killed_enemy(image_enemy_3);
                                 }
                             
@@ -791,13 +796,14 @@
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1);
                                 if (check_enemy_health(image_enemy_4)) {
+                                    score = score + 3;
                                     killed_enemy(image_enemy_4);
                                 }
                             
                             } else if (bullets[i].offsetTop <= 0) {
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                                score = score - 10;
+                                score = score - 5;
                             } else {
                                 bullets[i].style.top = (bullets[i].offsetTop - bullet_speed) + "px";
                             }
@@ -825,7 +831,7 @@
             setTimeout(()=>{ 
                 document.getElementById('start_rec').classList.add('hide'); 
                 any_move = true; 
-                score = 5000;
+                score = 1500;
                 scr.style.visibility = null;
             }, 5000);
         })
