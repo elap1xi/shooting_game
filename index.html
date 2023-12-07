@@ -450,6 +450,7 @@
                 rec_n_spoiler.style.visibility = null;
                 clearInterval(score_interval);
                 document.getElementById('lvl_chg_rec').innerHTML = `Game Over!<br>Score : ${score}`;   // 최종점수
+                c_score = score;
                 document.getElementById('lvl_chg_rec').classList.remove('hide');
                 scr.style.visibility = "hidden";
                 clearInterval(gm);
@@ -506,6 +507,7 @@
                         if (image_enemy.style.visibility == "hidden") {
                             level = level + 1;
                             document.getElementById('lvl_chg_rec').innerHTML = `Level Complete!<br>Score : ${score}`;   // 최종점수
+                            c_score = score;
                             document.getElementById('lvl_chg_rec').classList.remove('hide');
                             scr.style.visibility = "hidden";
                             clearInterval(gm);
