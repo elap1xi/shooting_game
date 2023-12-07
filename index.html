@@ -48,6 +48,7 @@
             border: none;
             border-left: 20px;
             cursor: pointer;
+            z-index: 1;
         }
 
         .button {
@@ -84,10 +85,9 @@
         #ready {
             position: absolute;
             left: 26%;
-            top: 60%;
+            top: 65%;
             width: 48%;
             transition: 3s;
-            z-index: 1;
         }
 
         #lvl_chg_rec, #start_rec {
@@ -162,6 +162,15 @@
             z-index: 1;            
         }
 
+        #timer {
+            position: absolute;
+            text-align: center;
+            font-size: 25px;
+            right: 2%;
+            top: 10%;
+            z-index: 1;  
+        }
+
         #hp {
             position: absolute;
             text-align: left;
@@ -179,7 +188,7 @@
         #leftContainer {
             text-align: left;
             position: absolute;
-            top: 30%; 
+            top: 40%; 
             left: 2%; 
             background-color: rgb(232, 232, 232); 
             padding: 20px; 
@@ -196,6 +205,15 @@
             padding: 20px; 
             border-radius: 5px;
             font-size: 15px;
+            z-index: 1;
+        }
+
+        #emphasis {
+            position: absolute;
+            text-align: center;
+            font-size: 20px;
+            left: 44%;
+            top: 55%;
             z-index: 1;
         }
     </style>
@@ -216,15 +234,17 @@
             <img id="image_enemy_2" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_3" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
             <img id="image_enemy_4" src="images/enemy_zzol.png" alt="img" width="60px" height="60px">
-        <div id="discription">조작법<br> 좌/우 이동 : A/D<br> 총알 발사 : K<br><br>빠르게 클리어 할수록,<br>버려지는 총알의 개수가 적을수록<br> 점수가 더 높아집니다.</div>
+        <div id="discription">조작법<br> 좌/우 이동 : A/D<br> 총알 발사 : K<br><br>적을 많이 죽일수록,<br>버려지는 총알(적기에 맞지 않은 총알)<br>의 개수가 적을수록<br> 점수가 더 높아집니다.<br>- 제한시간 3분 -</div>
+        <div id="emphasis">왼쪽 상단 글 필독*</div>
         <div id="scr">현재 점수 : (Null)</div>
-        <div id="vertical_line_L"></div>
-        <div id="vertical_line_R"></div>
-        <div id="rec_n_spoiler"></div>
-        <div id="rec_n_spoiler_2"></div>
-        <div id="rec_n_spoiler_3"></div>
-        <div id="leftContainer"></div>
-        <div id="hp"></div>
+        <div id="timer"></div>
+            <div id="vertical_line_L"></div>
+            <div id="vertical_line_R"></div>
+                <div id="rec_n_spoiler"></div>
+                <div id="rec_n_spoiler_2"></div>
+                <div id="rec_n_spoiler_3"></div>
+            <div id="leftContainer"></div>
+            <div id="hp"></div>
         <button class="btn" id="ready">Yes</button>
             <div class="rec" id="start_rec"></div>
             <div class="rec hide" id="lvl_chg_rec">Lv. (Null)</div>
@@ -232,12 +252,9 @@
     </div>
 
     <script>
-        // if(mail=="22026@daehyun.hs.kr"){
-        //     score = 5000;
-        // }
         // ======= CONFIG ========
         let level = 1;
-        let score = 1500;
+        let score = 0;
         let bullet_term = 50;   // ms
         let bullet_speed = 7;
         // =======================
@@ -256,6 +273,7 @@
         image_enemy_2.style.visibility = "hidden";  image_enemy_3.style.visibility = "hidden";
         image_enemy_4.style.visibility = "hidden";  rec_n_spoiler.style.visibility = "hidden";
         scr.style.visibility = "hidden";
+        timer.style.visibility = "hidden";
         const image = document.getElementById("image");
         const imagePosition = document.getElementById("imagePosition");
 
@@ -426,11 +444,20 @@
         }
 
         const score_interval = setInterval(() => {
-            score = score - 3;
+            time = time - 1;
+            if(time==0){
+                any_move = false;
+                rec_n_spoiler.style.visibility = null;
+                clearInterval(score_interval);
+                document.getElementById('lvl_chg_rec').innerHTML = `Game Over!<br>Score : ${score}`;   // 최종점수
+                document.getElementById('lvl_chg_rec').classList.remove('hide');
+                scr.style.visibility = "hidden";
+                clearInterval(gm);
+            }
+            document.getElementById('timer').innerHTML = `남은 시간 : ${time}s`;
             document.getElementById('scr').innerHTML = `현재 점수 : ${score}`;
             if (level === 11) {
-                console.log(score);
-                clearInterval(intervalId);
+                clearInterval(score_interval);
             }
         }, 1000);
 
@@ -439,7 +466,7 @@
             // document.getElementById('log').innerHTML = `level : ${level}<br>lv_5 : ${lv_5}<br>lv_6 : ${lv_6}<br>lv_9 : ${lv_9}<br>lv_10 : ${lv_10}<br>moving : ${any_move}<br>-- health --<br>${e14_z} ${e14_z2} ${e14_z3} ${e14_z4}<br>${e5_b} ${e5_z} ${e5_z2} ${e5_z3} ${e5_z4}<br>${e68_z} ${e68_z2} ${e68_z3} ${e68_z4}<br>${e9_b} ${e9_z} ${e9_z2} ${e9_z3} ${e9_z4}<br>${e10_b}<br><br>Score : ${score}`; // (TEST)
                 if(started){
                     if (lv_5 && lv_6 && lv_9 && lv_10) {
-                        if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
+                        if (image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
                             rec_n_spoiler.style.visibility = null;
                             level_change()
                             if (level == 5) {
@@ -450,7 +477,7 @@
                             }
                         }
                     } else if (!lv_5 && lv_6 && lv_9 && lv_10) {
-                        if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden") {
+                        if (image_enemy.style.visibility == "hidden" && image_enemy_1.style.visibility == "hidden" && image_enemy_2.style.visibility == "hidden" && image_enemy_3.style.visibility == "hidden" && image_enemy_4.style.visibility == "hidden") {
                             level_change()
                             if (level == 6) {
                                 lv_6 = false;
@@ -752,7 +779,7 @@
             if (e14_z4==0 && e5_z4==0 && e68_z4==0 && e9_z4==0) { killed_enemy(image_enemy4); }
         }, 500);
 
-        setInterval(
+        const p = setInterval(
             function () {
                 for (var i = 0; i < bullets.length; i++) {
                     try {
@@ -803,13 +830,13 @@
                             } else if (bullets[i].offsetTop <= 0) {
                                 document.body.removeChild(bullets[i]);
                                 bullets.splice(i, 1); // 배열에서도 해당 요소를 제거
-                                score = score - 5;
+                                score = score - 1;
                             } else {
                                 bullets[i].style.top = (bullets[i].offsetTop - bullet_speed) + "px";
                             }
                         }
-                    } catch {
-
+                    } catch(err) {
+                        console.log(err);
                     }
                 }
             }, 10
@@ -819,7 +846,7 @@
             e.preventDefault();
             document.getElementById('mainpg').classList.add('hide');
             document.getElementById('transpg').classList.remove('hide');
-            document.getElementById('start_rec').innerHTML = "Ready?";
+            document.getElementById('start_rec').innerHTML = "Ready?"; 
         });
 
         document.querySelector('#ready').addEventListener('click', function(e) {
@@ -831,10 +858,13 @@
             setTimeout(()=>{ 
                 document.getElementById('start_rec').classList.add('hide'); 
                 any_move = true; 
-                score = 1500;
+                score = 0;
                 scr.style.visibility = null;
+                time = 10;
+                timer.style.visibility = null;
+                emphasis.style.visibility = "hidden";
             }, 5000);
-        })
+        });
 
     </script>
 </body>
